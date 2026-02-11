@@ -32,14 +32,13 @@
     },
     {
       "parameters": {
-        "mode": "htmlToMarkdown",
-        "html": "={{ $json.html }}",
-        "options": {}
+        "mode": "runOnceForEachItem",
+        "jsCode": "const html = $json.html || '';\n\nlet md = html;\n\n// MSO conditional comments\nmd = md.replace(/<!--\\[if[\\s\\S]*?<!\\[endif\\]-->/gi, '');\n// style, head, script tags\nmd = md.replace(/<style[\\s\\S]*?<\\/style>/gi, '');\nmd = md.replace(/<head[\\s\\S]*?<\\/head>/gi, '');\nmd = md.replace(/<script[\\s\\S]*?<\\/script>/gi, '');\n\n// <hr> -> markdown horizontal rule\nmd = md.replace(/<hr[^>]*>/gi, '\\n---\\n');\n// <br> -> newline\nmd = md.replace(/<br\\s*\\/?>/gi, '\\n');\n\n// Links: <a href=\"url\">text</a> -> [text](url)\nmd = md.replace(/<a[^>]*href=\"([^\"]*)\"[^>]*>([\\s\\S]*?)<\\/a>/gi, '[$2]($1)');\n// Bold\nmd = md.replace(/<strong>([\\s\\S]*?)<\\/strong>/gi, '**$1**');\nmd = md.replace(/<b>([\\s\\S]*?)<\\/b>/gi, '**$1**');\n// Italic\nmd = md.replace(/<em>([\\s\\S]*?)<\\/em>/gi, '*$1*');\n// Images with alt\nmd = md.replace(/<img[^>]*src=\"([^\"]*)\"[^>]*alt=\"([^\"]*)\"[^>]*>/gi, (m, src, alt) => alt ? `![${alt}](${src})` : '');\nmd = md.replace(/<img[^>]*alt=\"([^\"]*)\"[^>]*src=\"([^\"]*)\"[^>]*>/gi, (m, alt, src) => alt ? `![${alt}](${src})` : '');\n// Remove remaining img tags (tracking pixels etc)\nmd = md.replace(/<img[^>]*>/gi, '');\n\n// Block element closing tags -> newline\nmd = md.replace(/<\\/(div|p|td|tr|table|li|h[1-6]|blockquote)>/gi, '\\n');\n// Remove all remaining HTML tags\nmd = md.replace(/<[^>]+>/g, '');\n\n// Decode HTML entities\nmd = md.replace(/&amp;/g, '&');\nmd = md.replace(/&lt;/g, '<');\nmd = md.replace(/&gt;/g, '>');\nmd = md.replace(/&quot;/g, '\"');\nmd = md.replace(/&#39;/g, \"'\");\nmd = md.replace(/&nbsp;/g, ' ');\n\n// Trim each line\nmd = md.split('\\n').map(l => l.trim()).join('\\n');\n// Collapse 3+ consecutive blank lines to 2\nmd = md.replace(/\\n{3,}/g, '\\n\\n');\n// Trim overall\nmd = md.trim();\n\nreturn { json: { ...$json, data: md } };"
       },
-      "id": "markdown-convert",
-      "name": "Markdown",
-      "type": "n8n-nodes-base.markdown",
-      "typeVersion": 1,
+      "id": "html-to-markdown",
+      "name": "HTML to Markdown",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
       "position": [220, 0]
     },
     {
@@ -183,14 +182,14 @@
       "main": [
         [
           {
-            "node": "Markdown",
+            "node": "HTML to Markdown",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Markdown": {
+    "HTML to Markdown": {
       "main": [
         [
           {
