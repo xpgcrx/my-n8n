@@ -8,3 +8,6 @@ Thumbs.db
 
 # Steering files (if you want to keep them out of main branch, though usually good to keep)
 #.steering/
+
+# Backups (contain sensitive data)
+backups/
